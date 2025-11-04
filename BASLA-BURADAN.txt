@@ -1,0 +1,95 @@
+========================================
+        IMAGE OPTIMIZER v1.1
+    BURADAN BAŞLAYIN!
+========================================
+
+✅ SORUN ÇÖZÜLDÜ!
+==================
+Önceki donma sorunu Sharp kütüphanesi 
+ile çözüldü. Artık sorunsuz çalışıyor!
+
+
+🚀 HIZLI BAŞLANGIÇ (3 ADIM)
+===========================
+
+1️⃣  START.bat dosyasına çift tıklayın
+    └─> Uygulama açılacak
+
+2️⃣  "Görselleri Seç" veya Input klasörüne görsel ekleyin
+    └─> Zaten 1 test görseli var!
+
+3️⃣  "Optimizasyonu Başlat" butonuna tıklayın
+    └─> Progress bar ilerleyecek
+    └─> Loglar akacak
+    └─> Output klasöründe sonuçlar oluşacak
+
+
+📁 HAZIR EXE DOSYASI
+====================
+dist\win-unpacked\Image Optimizer.exe
+└─> Direkt çalıştırabilirsiniz!
+
+
+🎯 TEST İÇİN
+=============
+Input klasöründe test görseli var:
+  IMG_7765_SnapseedCopy.jpg
+
+Bu görsel işlendiğinde 15 dosya oluşacak:
+  - 5 boyut (1920x1080, 1280x720, 800x600, 600x400, 400x300)
+  - 3 format (WebP, AVIF, JPEG)
+  = 15 varyasyon
+
+
+📚 DÖKÜMANTASYON
+=================
+Detaylı bilgi için:
+
+  ► SORUN-COZUM.md
+    └─> Nelerin değiştiği, neden çalışmadığı
+
+  ► DEGISIKLIKLER.md
+    └─> Teknik değişiklikler
+
+  ► KULLANIM.md
+    └─> Detaylı kullanım klavuzu
+
+  ► README.md
+    └─> Genel bilgiler
+
+
+⚙️ AYARLAMA
+===========
+Boyut ve kalite ayarları için:
+  src\optimize-sharp.js
+
+
+🎨 ÖZELLİKLER
+=============
+✅ Çoklu format (WebP, AVIF, JPEG)
+✅ 5 farklı boyut
+✅ Modern UI (Dark mode)
+✅ Progress tracking
+✅ Canlı loglar
+✅ Toplu işlem (100+ görsel)
+✅ Offline çalışma
+
+
+❓ SORUN MU VAR?
+================
+1. START.bat ile başlatın
+2. DevTools: Ctrl + Shift + I
+3. Console'da hata kontrol edin
+4. SORUN-COZUM.md dosyasına bakın
+
+
+💡 İPUCU
+=========
+İlk çalıştırmada Electron yüklenmesi 
+birkaç saniye sürebilir, bekleyin!
+
+
+========================================
+  Şimdi START.bat'a çift tıklayın! 🚀
+========================================
+

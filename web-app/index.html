@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Optimizer - Görsel Optimize Aracı</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --success: #10b981;
+      --danger: #ef4444;
+      --dark: #1a1a2e;
+      --dark-light: #16213e;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+    }
+
+    .card {
+      background: var(--dark-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    .drop-zone {
+      border: 3px dashed var(--border);
+      border-radius: 12px;
+      padding: 3rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(99, 102, 241, 0.05);
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .drop-zone-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .drop-zone-text {
+      font-size: 1.25rem;
+      color: var(--text);
+      margin-bottom: 0.5rem;
+    }
+
+    .drop-zone-hint {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .btn {
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 44px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+      color: white;
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .file-list {
+      margin-top: 2rem;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .file-size {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .file-status {
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .file-status.pending {
+      background: rgba(249, 115, 22, 0.2);
+      color: #fb923c;
+    }
+
+    .file-status.processing {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    .file-status.completed {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+    }
+
+    .file-status.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #f87171;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, #8b5cf6 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .info-box {
+      background: rgba(99, 102, 241, 0.1);
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-box p {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .drop-zone {
+        padding: 2rem 1rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 Image Optimizer</h1>
+      <p class="subtitle">Görsellerinizi Hızlıca Optimize Edin - Kalite 60</p>
+    </header>
+
+    <div class="card">
+      <div class="info-box">
+        <p>
+          <strong>Nasıl Çalışır:</strong> Görsellerinizi sürükle-bırak yapın veya dosya seçin. 
+          Orijinal format korunur (JPG→JPG, PNG→PNG), sadece kalite 60'a düşürülür.
+          Optimize edilmiş görseller otomatik olarak indirilir.
+        </p>
+      </div>
+
+      <div class="drop-zone" id="dropZone">
+        <div class="drop-zone-icon">📁</div>
+        <div class="drop-zone-text">Görselleri Sürükle ve Bırak</div>
+        <div class="drop-zone-hint">veya tıklayarak dosya seçin</div>
+        <div class="drop-zone-hint" style="margin-top: 0.5rem;">
+          (JPG, JPEG, PNG desteklenir)
+        </div>
+      </div>
+
+      <input type="file" id="fileInput" class="file-input" multiple accept="image/jpeg,image/jpg,image/png">
+
+      <div class="file-list" id="fileList" style="display: none;"></div>
+
+      <div class="btn-group" id="actionButtons" style="display: none;">
+        <button class="btn btn-success" id="optimizeBtn">
+          <span>🚀 Optimize Et</span>
+        </button>
+        <button class="btn btn-primary" id="clearBtn">
+          🗑️ Temizle
+        </button>
+      </div>
+
+      <div id="progressSection" style="display: none;">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">0 / 0 tamamlandı</div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const actionButtons = document.getElementById('actionButtons');
+    const optimizeBtn = document.getElementById('optimizeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const progressSection = document.getElementById('progressSection');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    let selectedFiles = [];
+
+    // Drop zone click
+    dropZone.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // Drag and drop
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+      handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+      const imageFiles = Array.from(files).filter(file => 
+        file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      );
+
+      if (imageFiles.length === 0) {
+        alert('Lütfen sadece JPG, JPEG veya PNG dosyaları seçin!');
+        return;
+      }
+
+      selectedFiles = imageFiles;
+      displayFiles();
+      actionButtons.style.display = 'flex';
+    }
+
+    function displayFiles() {
+      fileList.innerHTML = '';
+      fileList.style.display = 'block';
+
+      selectedFiles.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+          <div class="file-info">
+            <span class="file-name">${file.name}</span>
+            <span class="file-size">${formatFileSize(file.size)}</span>
+          </div>
+          <span class="file-status pending" id="status-${index}">Bekliyor</span>
+        `;
+        fileList.appendChild(fileItem);
+      });
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    clearBtn.addEventListener('click', () => {
+      selectedFiles = [];
+      fileList.innerHTML = '';
+      fileList.style.display = 'none';
+      actionButtons.style.display = 'none';
+      progressSection.style.display = 'none';
+      fileInput.value = '';
+    });
+
+    // Çok agresif sıkıştırma (multi-pass)
+    async function optimizeImage(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+
+        img.onload = () => {
+          // İlk canvas - orijinal boyut
+          const canvas1 = document.createElement('canvas');
+          const ctx1 = canvas1.getContext('2d', { 
+            alpha: file.type === 'image/png',
+            desynchronized: true
+          });
+          
+          canvas1.width = img.width;
+          canvas1.height = img.height;
+          
+          // Smooth rendering için ayarlar
+          ctx1.imageSmoothingEnabled = true;
+          ctx1.imageSmoothingQuality = 'high';
+          
+          // İlk çizim
+          ctx1.drawImage(img, 0, 0);
+          
+          // İkinci canvas - biraz küçült ve tekrar büyüt (sıkıştırma için)
+          const canvas2 = document.createElement('canvas');
+          const ctx2 = canvas2.getContext('2d', { 
+            alpha: file.type === 'image/png',
+            desynchronized: true
+          });
+          
+          // %98 boyuta küçült
+          const tempWidth = Math.floor(img.width * 0.98);
+          const tempHeight = Math.floor(img.height * 0.98);
+          
+          canvas2.width = tempWidth;
+          canvas2.height = tempHeight;
+          ctx2.imageSmoothingEnabled = true;
+          ctx2.imageSmoothingQuality = 'high';
+          ctx2.drawImage(canvas1, 0, 0, tempWidth, tempHeight);
+          
+          // Final canvas - orijinal boyuta geri
+          const finalCanvas = document.createElement('canvas');
+          const finalCtx = finalCanvas.getContext('2d', { 
+            alpha: file.type === 'image/png',
+            desynchronized: true
+          });
+          
+          finalCanvas.width = img.width;
+          finalCanvas.height = img.height;
+          finalCtx.imageSmoothingEnabled = true;
+          finalCtx.imageSmoothingQuality = 'medium';
+          finalCtx.drawImage(canvas2, 0, 0, img.width, img.height);
+          
+          // Format belirle - PNG hariç her şey JPEG
+          const fileType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          const quality = file.type === 'image/png' ? 0.7 : 0.55; // PNG için 70, JPEG için 55
+          
+          finalCanvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Blob oluşturulamadı'));
+            }
+          }, fileType, quality);
+        };
+
+        img.onerror = () => reject(new Error('Görsel yüklenemedi'));
+        reader.onerror = () => reject(new Error('Dosya okunamadı'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    optimizeBtn.addEventListener('click', async () => {
+      if (selectedFiles.length === 0) return;
+
+      optimizeBtn.disabled = true;
+      clearBtn.disabled = true;
+      progressSection.style.display = 'block';
+
+      let completed = 0;
+      const total = selectedFiles.length;
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const statusEl = document.getElementById(`status-${i}`);
+        
+        try {
+          statusEl.textContent = 'İşleniyor...';
+          statusEl.className = 'file-status processing';
+
+          // Optimize
+          const optimizedBlob = await optimizeImage(file);
+          
+          // Format'ı koru
+          const extension = file.name.split('.').pop().toLowerCase();
+          const newFileName = file.name.replace(/\.[^/.]+$/, `_optimized.${extension}`);
+          
+          // Boyut kontrolü
+          console.log(`Orijinal: ${formatFileSize(file.size)}, Optimize: ${formatFileSize(optimizedBlob.size)}`);
+          
+          // İndir
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(optimizedBlob);
+          link.download = newFileName;
+          link.click();
+          URL.revokeObjectURL(link.href);
+
+          statusEl.textContent = `Tamamlandı ✓ (${formatFileSize(optimizedBlob.size)})`;
+          statusEl.className = 'file-status completed';
+
+          completed++;
+          updateProgress(completed, total);
+
+        } catch (error) {
+          console.error('Hata:', error);
+          statusEl.textContent = 'Hata!';
+          statusEl.className = 'file-status error';
+        }
+      }
+
+      optimizeBtn.disabled = false;
+      clearBtn.disabled = false;
+
+      if (completed === total) {
+        setTimeout(() => {
+          alert(`✅ ${completed} görsel başarıyla optimize edildi ve indirildi!`);
+        }, 500);
+      }
+    });
+
+    function updateProgress(current, total) {
+      const percent = Math.round((current / total) * 100);
+      progressFill.style.width = `${percent}%`;
+      progressText.textContent = `${current} / ${total} tamamlandı`;
+    }
+  </script>
+</body>
+</html>
+

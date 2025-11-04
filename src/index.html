@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Sharp tabanlı toplu görsel optimize aracı - Hızlı, stabil ve profesyonel">
+  <title>Image Optimizer v1.1 - Toplu Görsel Optimize Aracı</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --secondary: #8b5cf6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --dark: #1a1a2e;
+      --dark-light: #16213e;
+      --dark-lighter: #0f3460;
+      --text: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --border: #334155;
+      --shadow: rgba(0, 0, 0, 0.3);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding: 2rem 0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      color: var(--text-secondary);
+      font-size: 1.125rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--dark-light);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px var(--shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px var(--shadow);
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-title::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1.5rem;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 2px;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      min-height: 44px;
+      touch-action: manipulation;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px var(--shadow);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: linear-gradient(135deg, var(--primary-hover) 0%, var(--primary) 100%);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: #059669;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background: #dc2626;
+    }
+
+    .btn-secondary {
+      background: var(--dark-lighter);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--border);
+    }
+
+    /* Button Group */
+    .btn-group {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    /* Info Box */
+    .info-box {
+      background: var(--dark-lighter);
+      padding: 1.5rem;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+      margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .info-value {
+      color: var(--text);
+      font-weight: 600;
+      font-size: 1.125rem;
+    }
+
+    /* Progress Bar */
+    .progress-container {
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .progress-container.active {
+      display: block;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--dark-lighter);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 4px;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .progress-message {
+      text-align: center;
+      color: var(--text);
+      font-size: 0.875rem;
+      padding: 0.75rem;
+      background: var(--dark-lighter);
+      border-radius: 6px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Logs */
+    .logs-container {
+      background: var(--dark-lighter);
+      border-radius: 8px;
+      padding: 1.5rem;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      line-height: 1.8;
+      border: 1px solid var(--border);
+    }
+
+    .logs-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .logs-container::-webkit-scrollbar-track {
+      background: var(--dark);
+      border-radius: 4px;
+    }
+
+    .logs-container::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 4px;
+    }
+
+    .logs-container::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    .log-entry {
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+    }
+
+    .log-entry:hover {
+      background: var(--dark);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--dark-lighter);
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      background: var(--dark-light);
+      color: var(--text);
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 8px 16px var(--shadow);
+      border-left: 4px solid var(--primary);
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+      max-width: 400px;
+    }
+
+    .toast.success {
+      border-left-color: var(--success);
+    }
+
+    .toast.error {
+      border-left-color: var(--danger);
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toast {
+        right: 1rem;
+        left: 1rem;
+        max-width: none;
+      }
+    }
+
+    /* Loading Animation */
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 Image Optimizer v1.1</h1>
+      <p class="subtitle">Sharp ile Toplu Görsel Optimize Aracı - Hızlı ve Stabil</p>
+    </header>
+
+    <!-- İstatistikler -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="inputCount">0</div>
+        <div class="stat-label">Input Görseller</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">3</div>
+        <div class="stat-label">Format (WebP, AVIF, JPEG)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">5</div>
+        <div class="stat-label">Boyut Varyasyonu</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="estimatedOutput">0</div>
+        <div class="stat-label">Tahmini Çıktı Dosyası</div>
+      </div>
+    </div>
+
+    <!-- Görsel Seçme -->
+    <div class="card">
+      <h2 class="card-title">📁 Adım 1: Görselleri Seçin</h2>
+      <div class="info-box">
+        <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+          Optimize etmek istediğiniz görselleri seçin veya Input klasörüne manuel olarak ekleyin.
+        </p>
+        <div class="info-item">
+          <span class="info-label">Desteklenen Formatlar:</span>
+          <span class="info-value">JPG, PNG, WebP, GIF, BMP, TIFF</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" id="selectBtn">
+          📂 Görselleri Seç
+        </button>
+        <button class="btn btn-secondary" id="openInputBtn">
+          📂 Input Klasörünü Aç
+        </button>
+        <button class="btn btn-danger" id="clearInputBtn">
+          🗑️ Input'u Temizle
+        </button>
+      </div>
+    </div>
+
+    <!-- Optimize İşlemi -->
+    <div class="card">
+      <h2 class="card-title">⚙️ Adım 2: Optimize Et</h2>
+      <div class="info-box">
+        <div class="info-item">
+          <span class="info-label">Çıktı Formatları:</span>
+          <span class="info-value">WebP, AVIF, JPEG</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Boyutlar:</span>
+          <span class="info-value">1920x1080, 1280x720, 800x600, 600x400, 400x300</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Kalite:</span>
+          <span class="info-value">80 (Yüksek)</span>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-success" id="optimizeBtn">
+          🚀 Optimizasyonu Başlat
+        </button>
+        <button class="btn btn-secondary" id="openOutputBtn">
+          📂 Output Klasörünü Aç
+        </button>
+        <button class="btn btn-danger" id="clearOutputBtn">
+          🗑️ Output'u Temizle
+        </button>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-text" id="progressText">0%</div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-message" id="progressMessage">Hazırlanıyor...</div>
+      </div>
+    </div>
+
+    <!-- Loglar -->
+    <div class="card">
+      <h2 class="card-title">📊 İşlem Logları</h2>
+      <div class="logs-container" id="logsContainer">
+        <div class="log-entry">✨ Uygulama hazır. Görselleri seçin ve optimize etmeye başlayın!</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { electronAPI } = window;
+
+    // Elements
+    const selectBtn = document.getElementById('selectBtn');
+    const openInputBtn = document.getElementById('openInputBtn');
+    const openOutputBtn = document.getElementById('openOutputBtn');
+    const clearInputBtn = document.getElementById('clearInputBtn');
+    const clearOutputBtn = document.getElementById('clearOutputBtn');
+    const optimizeBtn = document.getElementById('optimizeBtn');
+    const logsContainer = document.getElementById('logsContainer');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+    const progressMessage = document.getElementById('progressMessage');
+    const inputCount = document.getElementById('inputCount');
+    const estimatedOutput = document.getElementById('estimatedOutput');
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Log mesajı ekle
+    function addLog(message) {
+      const logEntry = document.createElement('div');
+      logEntry.className = 'log-entry';
+      logEntry.textContent = `[${new Date().toLocaleTimeString('tr-TR')}] ${message}`;
+      logsContainer.appendChild(logEntry);
+      logsContainer.scrollTop = logsContainer.scrollHeight;
+    }
+
+    // Input sayısını güncelle
+    async function updateInputCount() {
+      const result = await electronAPI.getInputCount();
+      if (result.success) {
+        inputCount.textContent = result.count;
+        estimatedOutput.textContent = result.count * 15; // 3 format x 5 boyut
+      }
+    }
+
+    // Görselleri seç
+    selectBtn.addEventListener('click', async () => {
+      selectBtn.disabled = true;
+      addLog('Görsel seçim dialogu açılıyor...');
+
+      const result = await electronAPI.selectImages();
+      
+      if (result.success) {
+        addLog(`${result.files.length} görsel seçildi.`);
+        
+        const copyResult = await electronAPI.copyImages(result.files);
+        
+        if (copyResult.success) {
+          addLog(copyResult.message);
+          showToast(copyResult.message, 'success');
+          await updateInputCount();
+        } else {
+          addLog(copyResult.message);
+          showToast(copyResult.message, 'error');
+        }
+      } else {
+        addLog('Görsel seçimi iptal edildi.');
+      }
+
+      selectBtn.disabled = false;
+    });
+
+    // Input klasörünü aç
+    openInputBtn.addEventListener('click', async () => {
+      await electronAPI.openInputFolder();
+      addLog('Input klasörü açıldı.');
+      setTimeout(updateInputCount, 1000);
+    });
+
+    // Output klasörünü aç
+    openOutputBtn.addEventListener('click', async () => {
+      await electronAPI.openOutputFolder();
+      addLog('Output klasörü açıldı.');
+    });
+
+    // Input'u temizle
+    clearInputBtn.addEventListener('click', async () => {
+      if (!confirm('Input klasöründeki tüm dosyalar silinecek. Emin misiniz?')) {
+        return;
+      }
+
+      clearInputBtn.disabled = true;
+      const result = await electronAPI.clearInput();
+      
+      if (result.success) {
+        addLog(result.message);
+        showToast(result.message, 'success');
+        await updateInputCount();
+      } else {
+        addLog(result.message);
+        showToast(result.message, 'error');
+      }
+      
+      clearInputBtn.disabled = false;
+    });
+
+    // Output'u temizle
+    clearOutputBtn.addEventListener('click', async () => {
+      if (!confirm('Output klasöründeki tüm dosyalar silinecek. Emin misiniz?')) {
+        return;
+      }
+
+      clearOutputBtn.disabled = true;
+      const result = await electronAPI.clearOutput();
+      
+      if (result.success) {
+        addLog(result.message);
+        showToast(result.message, 'success');
+      } else {
+        addLog(result.message);
+        showToast(result.message, 'error');
+      }
+      
+      clearOutputBtn.disabled = false;
+    });
+
+    // Optimizasyon başlat
+    optimizeBtn.addEventListener('click', async () => {
+      optimizeBtn.disabled = true;
+      progressContainer.classList.add('active');
+      progressFill.style.width = '0%';
+      progressText.textContent = '0%';
+      progressMessage.textContent = 'Hazırlanıyor...';
+
+      addLog('🚀 Optimizasyon işlemi başlatıldı...');
+
+      const result = await electronAPI.startOptimization();
+
+      if (result.success) {
+        addLog('✅ ' + result.message);
+        showToast(result.message, 'success');
+        progressFill.style.width = '100%';
+        progressText.textContent = '100%';
+      } else {
+        addLog('❌ ' + result.message);
+        showToast(result.message, 'error');
+      }
+
+      optimizeBtn.disabled = false;
+    });
+
+    // Progress güncellemelerini dinle
+    electronAPI.onOptimizationProgress((data) => {
+      const { current, total, message, percentage } = data;
+      
+      progressFill.style.width = `${percentage}%`;
+      progressText.textContent = `${percentage}%`;
+      progressMessage.textContent = message;
+      
+      addLog(message);
+    });
+
+    // Sayfa yüklendiğinde input sayısını güncelle
+    updateInputCount();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,115 @@
+========================================
+  IMAGE OPTIMIZER
+  Çalıştırma Talimatları
+========================================
+
+📌 HIZLI BAŞLANGIÇ
+==================
+
+1️⃣ UYGULAMAYI ÇALIŞTIRMA:
+   
+   a) START.bat dosyasına çift tıklayın
+   VEYA
+   b) Terminal/CMD'de: npm start
+
+
+2️⃣ EXE DOSYASI OLUŞTURMA:
+   
+   a) BUILD.bat dosyasına çift tıklayın
+   VEYA  
+   b) Terminal/CMD'de: npm run build:win
+   
+   Not: İlk build 5-10 dakika sürebilir
+   Sonuç: dist\Image Optimizer Setup.exe
+
+
+3️⃣ GÖRSEL OPTİMİZE ETME:
+   
+   a) Uygulama açılınca "Görselleri Seç" butonuna tıklayın
+   b) Optimize etmek istediğiniz görselleri seçin
+   c) "Optimizasyonu Başlat" butonuna tıklayın
+   d) İşlem bitince "Output Klasörünü Aç" ile sonuçları görün
+
+
+========================================
+📁 KLASÖR YAPISI
+========================================
+
+image-optimizer/
+├── input/          ➜ Orijinal görselleri buraya
+├── output/         ➜ Optimize edilmiş görseller buraya
+├── src/            ➜ Kaynak kodlar
+├── START.bat       ➜ Uygulamayı başlat
+├── BUILD.bat       ➜ EXE oluştur
+├── KULLANIM.md     ➜ Detaylı kullanım klavuzu
+└── README.md       ➜ Teknik dokümantasyon
+
+
+========================================
+⚙️ AYARLAR
+========================================
+
+Boyut ve format ayarlarını değiştirmek için:
+   src\optimize.js dosyasını düzenleyin
+
+
+========================================
+❓ SORUN GİDERME
+========================================
+
+SORUN: Uygulama açılmıyor
+ÇÖZÜM: 
+   npm install
+   npm start
+
+SORUN: Build hatası
+ÇÖZÜM:
+   npm cache clean --force
+   npm install
+   npm run build:win
+
+SORUN: Görseller işlenmiyor
+ÇÖZÜM:
+   - Input klasöründe görsel olduğundan emin olun
+   - Desteklenen formatları kullanın (JPG, PNG, WebP, etc.)
+
+
+========================================
+📊 ÖZELLİKLER
+========================================
+
+✅ Çoklu format: WebP, AVIF, JPEG
+✅ 5 farklı boyut: 1920x1080'den 400x300'e
+✅ Toplu işlem: 100+ görsel tek seferde
+✅ Modern UI: Dark mode, smooth animasyonlar
+✅ Progress tracking: Canlı ilerleme takibi
+✅ Offline: İnternet gerektirmez
+
+
+========================================
+🎯 HIZLI İPUÇLARI
+========================================
+
+💡 Büyük miktarda görsel için batch'ler halinde işleyin
+💡 Output klasörünü düzenli temizleyin
+💡 Kalite ayarlarını ihtiyacınıza göre değiştirin
+💡 Web kullanımı için WebP/AVIF önerilir
+💡 Eski tarayıcılar için JPEG backup tutun
+
+
+========================================
+📱 İLETİŞİM
+========================================
+
+Detaylı bilgi için:
+- README.md
+- KULLANIM.md
+
+Node.js versiyonu: 18+
+Platform: Windows (macOS/Linux için build config gerekir)
+
+
+========================================
+  Başarılar! 🚀
+========================================
+
