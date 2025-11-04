@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Görsel Optimize Aracı - Image Optimizer</title>
+  <meta name="description" content="Görselleri hızlıca optimize edin. Sürükle-bırak ile kolay kullanım, format korunumu ve agresif sıkıştırma.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 800px;
+      width: 100%;
+      padding: 40px;
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.9em;
+    }
+
+    .drop-zone {
+      border: 3px dashed #667eea;
+      border-radius: 15px;
+      padding: 60px 20px;
+      text-align: center;
+      background: #f8f9ff;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .drop-zone:hover {
+      border-color: #764ba2;
+      background: #f0f1ff;
+      transform: translateY(-2px);
+    }
+
+    .drop-zone.drag-over {
+      border-color: #764ba2;
+      background: #e8e9ff;
+      transform: scale(1.02);
+    }
+
+    .drop-zone-icon {
+      font-size: 4em;
+      margin-bottom: 20px;
+      color: #667eea;
+    }
+
+    .drop-zone-text {
+      font-size: 1.2em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .drop-zone-subtext {
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-list {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .file-item {
+      background: #f8f9ff;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+
+    .file-item:hover {
+      background: #f0f1ff;
+      transform: translateX(5px);
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      flex: 1;
+    }
+
+    .file-icon {
+      font-size: 1.5em;
+    }
+
+    .file-details {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 5px;
+    }
+
+    .file-size {
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    .file-status {
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .file-status.pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .file-status.processing {
+      background: #cfe2ff;
+      color: #084298;
+    }
+
+    .file-status.completed {
+      background: #d1e7dd;
+      color: #0f5132;
+    }
+
+    .file-status.error {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    .action-buttons {
+      display: none;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e9ecef;
+      color: #495057;
+    }
+
+    .btn-secondary:hover {
+      background: #dee2e6;
+    }
+
+    .progress-section {
+      margin-top: 20px;
+      display: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 30px;
+      background: #e9ecef;
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 0.85em;
+    }
+
+    .progress-text {
+      text-align: center;
+      color: #666;
+      font-size: 0.9em;
+    }
+
+    .stats {
+      background: #f8f9ff;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .stats-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 1.5em;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #e9ecef;
+      color: #666;
+      font-size: 0.85em;
+    }
+
+    .info-box {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .info-box-title {
+      font-weight: 600;
+      color: #856404;
+      margin-bottom: 5px;
+    }
+
+    .info-box-text {
+      color: #856404;
+      font-size: 0.9em;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 1.5em;
+      }
+
+      .drop-zone {
+        padding: 40px 15px;
+      }
+
+      .drop-zone-icon {
+        font-size: 3em;
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 0.9em;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .spinner {
+      display: inline-block;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🖼️ Görsel Optimize Aracı</h1>
+    <p class="subtitle">Görselleri hızlıca optimize edin - Kalite 60, Format Korunur</p>
+
+    <div class="info-box">
+      <div class="info-box-title">ℹ️ Bilgi</div>
+      <div class="info-box-text">
+        Görseller orijinal boyutlarında, kalite 60 ile optimize edilir. JPG→JPG, PNG→PNG formatı korunur.
+      </div>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-zone-icon">📁</div>
+      <div class="drop-zone-text">Görselleri buraya sürükle-bırak</div>
+      <div class="drop-zone-subtext">veya tıklayarak seç (JPG, PNG, JPEG)</div>
+    </div>
+
+    <input type="file" id="fileInput" class="file-input" accept="image/jpeg,image/jpg,image/png" multiple>
+
+    <div class="file-list" id="fileList"></div>
+
+    <div class="action-buttons" id="actionButtons">
+      <button class="btn btn-primary" id="optimizeBtn">
+        <span>⚡</span> Optimize Et
+      </button>
+      <button class="btn btn-secondary" id="clearBtn">
+        <span>🗑️</span> Temizle
+      </button>
+    </div>
+
+    <div class="progress-section" id="progressSection">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width: 0%;">0%</div>
+      </div>
+      <div class="progress-text" id="progressText">0 / 0 tamamlandı</div>
+    </div>
+
+    <div class="footer">
+      💜 Powered by Canvas API | Made with ❤️
+    </div>
+  </div>
+
+  <script type="module">
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const actionButtons = document.getElementById('actionButtons');
+    const optimizeBtn = document.getElementById('optimizeBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const progressSection = document.getElementById('progressSection');
+    const progressFill = document.getElementById('progressFill');
+    const progressText = document.getElementById('progressText');
+
+    let selectedFiles = [];
+
+    // Drop zone events
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      
+      const files = Array.from(e.dataTransfer.files).filter(file => 
+        file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png'
+      );
+      
+      if (files.length > 0) {
+        handleFiles(files);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      if (files.length > 0) {
+        handleFiles(files);
+      }
+    });
+
+    function handleFiles(files) {
+      selectedFiles = files;
+      displayFiles();
+      actionButtons.style.display = 'flex';
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes === 0) return '0 Bytes';
+      const k = 1024;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    function displayFiles() {
+      fileList.innerHTML = '';
+      fileList.style.display = 'block';
+
+      selectedFiles.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+          <div class="file-info">
+            <div class="file-icon">🖼️</div>
+            <div class="file-details">
+              <div class="file-name">${file.name}</div>
+              <div class="file-size">${formatFileSize(file.size)}</div>
+            </div>
+          </div>
+          <div class="file-status pending" id="status-${index}">Bekliyor</div>
+        `;
+        fileList.appendChild(fileItem);
+      });
+    }
+
+    clearBtn.addEventListener('click', () => {
+      selectedFiles = [];
+      fileList.innerHTML = '';
+      fileList.style.display = 'none';
+      actionButtons.style.display = 'none';
+      progressSection.style.display = 'none';
+      fileInput.value = '';
+    });
+
+    // Çok agresif sıkıştırma (multi-pass)
+    async function optimizeImage(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+
+        img.onload = () => {
+          // İlk canvas - orijinal boyut
+          const canvas1 = document.createElement('canvas');
+          const ctx1 = canvas1.getContext('2d', { 
+            alpha: file.type === 'image/png',
+            desynchronized: true
+          });
+          
+          canvas1.width = img.width;
+          canvas1.height = img.height;
+          
+          // Smooth rendering için ayarlar
+          ctx1.imageSmoothingEnabled = true;
+          ctx1.imageSmoothingQuality = 'high';
+          
+          // İlk çizim
+          ctx1.drawImage(img, 0, 0);
+          
+          // İkinci canvas - biraz küçült ve tekrar büyüt (sıkıştırma için)
+          const canvas2 = document.createElement('canvas');
+          const ctx2 = canvas2.getContext('2d', { 
+            alpha: file.type === 'image/png',
+            desynchronized: true
+          });
+          
+          // %98 boyuta küçült
+          const tempWidth = Math.floor(img.width * 0.98);
+          const tempHeight = Math.floor(img.height * 0.98);
+          
+          canvas2.width = tempWidth;
+          canvas2.height = tempHeight;
+          ctx2.imageSmoothingEnabled = true;
+          ctx2.imageSmoothingQuality = 'high';
+          ctx2.drawImage(canvas1, 0, 0, tempWidth, tempHeight);
+          
+          // Final canvas - orijinal boyuta geri
+          const finalCanvas = document.createElement('canvas');
+          const finalCtx = finalCanvas.getContext('2d', { 
+            alpha: file.type === 'image/png',
+            desynchronized: true
+          });
+          
+          finalCanvas.width = img.width;
+          finalCanvas.height = img.height;
+          finalCtx.imageSmoothingEnabled = true;
+          finalCtx.imageSmoothingQuality = 'medium';
+          finalCtx.drawImage(canvas2, 0, 0, img.width, img.height);
+          
+          // Format belirle - PNG hariç her şey JPEG
+          const fileType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          const quality = file.type === 'image/png' ? 0.7 : 0.55; // PNG için 70, JPEG için 55
+          
+          finalCanvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob);
+            } else {
+              reject(new Error('Blob oluşturulamadı'));
+            }
+          }, fileType, quality);
+        };
+
+        img.onerror = () => reject(new Error('Görsel yüklenemedi'));
+        reader.onerror = () => reject(new Error('Dosya okunamadı'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    optimizeBtn.addEventListener('click', async () => {
+      if (selectedFiles.length === 0) return;
+
+      optimizeBtn.disabled = true;
+      clearBtn.disabled = true;
+      progressSection.style.display = 'block';
+
+      let completed = 0;
+      const total = selectedFiles.length;
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const statusEl = document.getElementById(`status-${i}`);
+        
+        try {
+          statusEl.textContent = 'İşleniyor...';
+          statusEl.className = 'file-status processing';
+
+          // Optimize
+          const optimizedBlob = await optimizeImage(file);
+          
+          // Format'ı koru
+          const extension = file.name.split('.').pop().toLowerCase();
+          const newFileName = file.name.replace(/\.[^/.]+$/, `_optimized.${extension}`);
+          
+          // Boyut kontrolü
+          console.log(`Orijinal: ${formatFileSize(file.size)}, Optimize: ${formatFileSize(optimizedBlob.size)}`);
+          
+          // İndir
+          const link = document.createElement('a');
+          link.href = URL.createObjectURL(optimizedBlob);
+          link.download = newFileName;
+          link.click();
+          URL.revokeObjectURL(link.href);
+
+          statusEl.textContent = `Tamamlandı ✓ (${formatFileSize(optimizedBlob.size)})`;
+          statusEl.className = 'file-status completed';
+
+          completed++;
+          updateProgress(completed, total);
+
+        } catch (error) {
+          console.error('Hata:', error);
+          statusEl.textContent = 'Hata!';
+          statusEl.className = 'file-status error';
+        }
+      }
+
+      optimizeBtn.disabled = false;
+      clearBtn.disabled = false;
+
+      if (completed === total) {
+        setTimeout(() => {
+          alert(`✅ ${completed} görsel başarıyla optimize edildi ve indirildi!`);
+        }, 500);
+      }
+    });
+
+    function updateProgress(current, total) {
+      const percent = Math.round((current / total) * 100);
+      progressFill.style.width = `${percent}%`;
+      progressFill.textContent = `${percent}%`;
+      progressText.textContent = `${current} / ${total} tamamlandı`;
+    }
+  </script>
+</body>
+</html>
+
